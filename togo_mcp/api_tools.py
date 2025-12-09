@@ -21,6 +21,7 @@ async def search_uniprot_entity(query: str, limit: int = 20) -> str:
     Returns:
         str: The UniProt protein entity ID corresponding to the given query."
     """
+    toolcall_log("search_uniprot_entity")
     url = "https://rest.uniprot.org/uniprotkb/search"
     params = {
         "query": query,
@@ -67,6 +68,7 @@ async def search_chembl_id_lookup(
     Returns:
         str: A JSON-formatted string containing the search results.
     """
+    toolcall_log("search_chembl_id_lookup")
     bulk = await search_chembl_generic("chembl_id_lookup", query, limit)
     total_count = bulk.get("page_meta", {}).get("total_count", 0)
     parsed_results = []
@@ -83,6 +85,7 @@ async def search_chembl_target(query: str, limit: int = 20) -> dict:
     """
     Search for ChEMBL target by query.
     """
+    toolcall_log("search_chembl_target")
     bulk = await search_chembl_generic("target", query, limit)
     total_count = bulk.get("page_meta", {}).get("total_count", 0)
 
@@ -104,6 +107,7 @@ async def search_chembl_molecule(query: str, limit: int = 20) -> dict:
     """
     Search for ChEMBL molecule by query.
     """
+    toolcall_log("search_chembl_molecule")
     bulk = await search_chembl_generic("molecule", query, limit)
     total_count = bulk.get("page_meta", {}).get("total_count", 0)
     parsed_results = []
@@ -155,6 +159,7 @@ async def get_chembl_entity_by_id(service: str, chembl_id: str) -> str:
         chembl_id (str): The ChEMBL ID to search for.
 
     """
+    toolcall_log("get_chembl_entity_by_id")
     url = f"https://www.ebi.ac.uk/chembl/api/data/{service}/{chembl_id}.json"
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
@@ -173,6 +178,7 @@ async def get_pubchem_compound_id(compound_name: str) -> str:
 
     Returns: PubChem Compound ID in the JSON format
     """
+    toolcall_log("get_pubchem_compound_id")
     url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{compound_name}/cids/JSON"
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
@@ -189,6 +195,7 @@ async def get_compound_attributes_from_pubchem(pubchem_compound_id: str) -> str:
 
     Returns: Compound attributes in the JSON format
     """
+    toolcall_log("get_compound_attributes_from_pubchem")
     url = "https://togodx.dbcls.jp/human/sparqlist/api/metastanza_pubchem_compound"
     params = {"id": pubchem_compound_id}
     async with httpx.AsyncClient() as client:
@@ -213,6 +220,7 @@ async def search_pdb_entity(db: str, query: str, limit: int = 20) -> str:
     Returns:
         str: A JSON-formatted string containing the search results.
     """
+    toolcall_log("search_pdb_entity")
     url = f"https://pdbj.org/rest/newweb/search/{db}?query={query}"
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
@@ -236,6 +244,7 @@ async def search_mesh_entity(query: str, limit: int = 10) -> str:
     Returns:
         str: A JSON-formatted string containing the search results.
     """
+    toolcall_log("search_mesh_entity")
     url = "https://id.nlm.nih.gov/mesh/lookup/term"
     params = {"label": query,
               "match": "contains",

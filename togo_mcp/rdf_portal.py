@@ -1,5 +1,4 @@
 import httpx
-import json
 import os
 import yaml
 import sys
@@ -22,6 +21,7 @@ def rdf_portal_guide() -> str:
     Returns:
         str: The content of the RDF Portal Guide.
     """
+    toolcall_log("rdf_portal_guide")
     with open(RDF_PORTAL_GUIDE, "r", encoding="utf-8") as file:
         prompt = file.read()
     return prompt
@@ -34,6 +34,7 @@ async def get_sparql_endpoints() -> Dict[str,str]:
     Returns:
         Dict[str,str]: Dictionary of dbname-URL pairs.
     """
+    toolcall_log("get_sparql_endpoints")
     return SPARQL_ENDPOINT
 
 @mcp.tool(enabled=False)
@@ -46,6 +47,7 @@ async def get_void(
     Returns:
         str: A JSON-formatted string containing the VoID data.
     """
+    toolcall_log("get_void")
     query=f"""
 PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX sd: <http://www.w3.org/ns/sparql-service-description#>
@@ -115,6 +117,7 @@ async def run_sparql(
     Returns:
         str: CSV-formatted results of the SPARQL query.
     """
+    toolcall_log("run_sparql")
     return await execute_sparql(sparql_query, dbname)
 
 # --- Tools for exploring RDF databases ---
@@ -137,6 +140,7 @@ async def get_class_list(
     Returns:
         list: The list of classes.
     """
+    toolcall_log("get_class_list")
     sparql_query = f"""
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -169,6 +173,7 @@ async def get_property_list(
     Returns:
         list: The list of properties.
     """
+    toolcall_log("get_property_list")
     sparql_query = f"""
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -200,6 +205,7 @@ async def get_graph_list(
     Returns:
         str: CSV-formatted list of named graphs.
     """
+    toolcall_log("get_graph_list")
     sparql_query = '''
 SELECT DISTINCT ?graph WHERE {
   GRAPH ?graph {
@@ -225,6 +231,7 @@ async def get_MIE_file(
     Returns:
         str: The MIE file containing the RDF schema information in YAML format.
     """
+    toolcall_log("get_MIE_file")
     mie_file = MIE_DIR + "/" + dbname + ".yaml"
     drop_keys = [] 
 #    drop_keys += ["data_statistics", "architectural_notes"]
@@ -263,6 +270,7 @@ def list_databases() -> List[Dict[str, Any]]:
     Returns:
         A list of dictionaries, each containing schema info for a file.
     """
+    toolcall_log("list_databases")
     resources_dir = MIE_DIR
     if not os.path.isdir(resources_dir):
         print(f"Error: Directory '{resources_dir}' not found.", file=sys.stderr)
@@ -324,6 +332,7 @@ def get_sparql_example(
     Returns:
         str: The content of the SPARQL example file, or an error message if not found.
     """
+    toolcall_log("get_sparql_example")
     example_file = os.path.join(SPARQL_EXAMPLES, f"{dbname}.rq")
     if not os.path.exists(example_file):
         return f"Error: The SPARQL example file for '{dbname}' was not found at '{example_file}'."

@@ -5,6 +5,22 @@ import os
 import json
 import httpx
 import asyncio
+import logging
+import inspect
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+def toolcall_log(funname: str) -> None:
+    """
+    toolcall_log
+    
+    :param funname: The name of the tool being called.
+    :type funname: str
+    """
+    logger.info(f"TogoMCP_tool: {funname}")
+    return None
+
 
 # The MIE files are used to define the shape expressions for SPARQL queries. 
 CWD = os.getenv("TOGOMCP_DIR", ".")
@@ -54,8 +70,9 @@ async def execute_sparql(sparql_query: str, dbname: str) -> str:
 # The Primary MCP server
 mcp = FastMCP("TogoMCP: RDF Portal MCP Server")
 
-# creating an auxiliary MCP server from TogoID OpenAPI (to be merged)
-togoid_client = httpx.AsyncClient(base_url="https://api.togoid.dbcls.jp")
+# Creating an auxiliary MCP server from TogoID OpenAPI (to be merged with `mcp`)
+# 2025-12-09: `convertId` and `countId` don't work is this form. So, don't use.
+""" togoid_client = httpx.AsyncClient(base_url="https://api.togoid.dbcls.jp")
 with open("resources/togoid_oas.json", "r") as f:
     openapi_spec = json.load(f)
 
@@ -78,3 +95,4 @@ togoid_mcp = FastMCP.from_openapi(
 togoid_tools = asyncio.run(togoid_mcp.get_tools())
 for key in togoid_tools:
     mcp.add_tool(togoid_tools[key])
+"""
