@@ -36,10 +36,10 @@ Change the file paths as appropriate.
 {
     "mcpServers": {
         "togomcp": {
-            "command": "/Users/arkinjo/.local/bin/uv",
+            "command": "{path to uv}/uv",
             "args":[
                 "--directory",
-                "/Users/arkinjo/work/GitHub/togo-mcp",
+                "{path to togo-mcp}/togo-mcp",
                 "run",
                 "togo-mcp-server"
             ]
@@ -49,3 +49,4 @@ Change the file paths as appropriate.
 ```
 #### "Admin" mode
 In the above setting, you can also use `togo-mcp-admin` instead of `togo-mcp-server`, which includes additional MCP tools for generating new MIE files.
+
