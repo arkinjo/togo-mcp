@@ -271,7 +271,6 @@ def list_databases() -> List[Dict[str, Any]]:
     all_schemas_info = []
     for db_name in sorted(SPARQL_ENDPOINT.keys()):
         filename = db_name + ".yaml"
-        print(f"##### Processing file: {filename}", file=sys.stderr)
         file_path = os.path.join(resources_dir, filename)
         try:
             with open(file_path, "r", encoding="utf-8") as f:
