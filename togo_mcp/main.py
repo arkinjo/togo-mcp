@@ -3,7 +3,6 @@ from .rdf_portal import *
 from .api_tools import *
 from .togoid import convertId, countId, getAllDataset, getDataset, getAllRelation, getRelation, getDescription
 
-
 def run():
     mcp.run(transport="http", host="0.0.0.0", port=8000)
 

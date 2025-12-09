@@ -1,6 +1,5 @@
 from .server import *
 import httpx
-from typing import Optional
 
 _client = httpx.AsyncClient(base_url="https://api.togoid.dbcls.jp")
 
@@ -8,22 +7,16 @@ _client = httpx.AsyncClient(base_url="https://api.togoid.dbcls.jp")
 async def convertId(
     ids: str,
     route: str,
-    report: str = "target",
-    format: str = "json",
     limit: int = 10000,
     offset: int = 0,
-    noheader: Optional[str] = None
-) -> dict:
+) -> list:
     """Convert IDs from one database to another.
     
     Args:
         ids: Comma-separated list of source IDs
         route: Comma-separated list of datasets (source to target)
-        report: Output type - 'target', 'pair', 'all', or 'full'
-        format: Output format - 'json', 'csv', or 'tsv'
         limit: Maximum number of results (max 10000)
         offset: Pagination offset
-        noheader: If '1', omit header in CSV/TSV
     
     Returns:
         Dictionary with ids, route, and result arrays
@@ -31,17 +24,17 @@ async def convertId(
     params = {
         "ids": ids,
         "route": route,
-        "report": report,
-        "format": format,
+        "report": "target",
+        "format": "json",
         "limit": limit,
-        "offset": offset
+        "offset": offset,
+        "noheader": "0"
     }
-    if noheader:
-        params["noheader"] = noheader
     
     response = await _client.get("/convert", params=params)
     response.raise_for_status()
-    return response.json()
+    return response.json() .get("results")
+
 
 @mcp.tool()
 async def countId(
