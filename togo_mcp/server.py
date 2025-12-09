@@ -1,8 +1,10 @@
 from fastmcp import FastMCP
 import csv
-from typing import Dict,Literal
+from typing import Dict
 import os
+import json
 import httpx
+import asyncio
 
 # The MIE files are used to define the shape expressions for SPARQL queries. 
 CWD = os.getenv("TOGOMCP_DIR", ".")
@@ -49,4 +51,30 @@ async def execute_sparql(sparql_query: str, dbname: str) -> str:
     response.raise_for_status()
     return response.text
 
+# The Primary MCP server
 mcp = FastMCP("TogoMCP: RDF Portal MCP Server")
+
+# creating an auxiliary MCP server from TogoID OpenAPI (to be merged)
+togoid_client = httpx.AsyncClient(base_url="https://api.togoid.dbcls.jp")
+with open("resources/togoid_oas.json", "r") as f:
+    openapi_spec = json.load(f)
+
+togoid_mcp = FastMCP.from_openapi(
+    openapi_spec=openapi_spec,
+    client=togoid_client,
+    name="TogoID MCP Server",
+    mcp_names={
+        "getAllDataset": "togoId_getAllDataset",
+        "getDataset": "togoId_getDataset",
+        "getAllRelation": "togoId_getAllRelation",
+        "getRelation": "togoId_getRelation",
+        "convertId": "togoId_convertId",
+        "countId": "togoId_countId",
+        "getDescription": "togoId_getDescription"
+    }
+)
+
+# Merging TogoID tools into the primary MCP server
+togoid_tools = asyncio.run(togoid_mcp.get_tools())
+for key in togoid_tools:
+    mcp.add_tool(togoid_tools[key])
