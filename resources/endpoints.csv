@@ -1,10 +1,10 @@
 database,SPARQL Endpoint
-uniprot,https://rdfportal.org/backend/sib/sparql
-pubchem,https://rdfportal.org/backend/pubchem/sparql
-pdb,https://rdfportal.org/backend/pdb/sparql
-chembl,https://rdfportal.org/backend/ebi/sparql
-chebi,https://rdfportal.org/backend/ebi/sparql
-reactome,https://rdfportal.org/backend/ebi/sparql
+uniprot,https://rdfportal.org/sib/sparql
+pubchem,https://rdfportal.org/pubchem/sparql
+pdb,https://rdfportal.org/pdb/sparql
+chembl,https://rdfportal.org/ebi/sparql
+chebi,https://rdfportal.org/ebi/sparql
+reactome,https://rdfportal.org/ebi/sparql
 rhea,https://rdfportal.org/sib/sparql
 mesh,https://rdfportal.org/primary/sparql
 go,https://rdfportal.org/primary/sparql
