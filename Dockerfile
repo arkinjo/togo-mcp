@@ -1,5 +1,6 @@
 # Use a lightweight Python base image
-FROM docker.io/astral/uv:latest
+FROM docker.io/astral/uv:python3.12-bookworm-slim
+
 
 # Set the working directory inside the container
 WORKDIR /app
