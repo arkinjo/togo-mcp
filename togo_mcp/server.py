@@ -30,6 +30,9 @@ RDF_PORTAL_GUIDE= CWD + "/resources/rdf_portal_guide.md"
 SPARQL_EXAMPLES= CWD + "/sparql-examples"
 RDF_CONFIG_TEMPLATE= CWD + "/rdf-config/template.yaml"
 ENDPOINTS_CSV = CWD + "/resources/endpoints.csv"
+INDEX_HTML = CWD + "/docs/togomcp-intro.html"
+
+
 
 def load_sparql_endpoints(path: str) -> Dict[str, str]:
     """Load SPARQL endpoints from a CSV file."""
@@ -76,6 +79,6 @@ async def health_check(request: Request) -> PlainTextResponse:
 
 @mcp.custom_route("/", methods=["GET"])
 async def index(request: Request) -> HTMLResponse:
-    with open(CWD + '/resources/index.html', 'r') as f:
+    with open(INDEX_HTML, 'r') as f:
         html_content = f.read()
     return HTMLResponse(html_content)
