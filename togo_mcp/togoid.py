@@ -2,8 +2,9 @@ from .server import *
 import httpx
 
 _client = httpx.AsyncClient(base_url="https://api.togoid.dbcls.jp")
+togoid_mcp = FastMCP("TogoID API server")
 
-@mcp.tool()
+@togoid_mcp.tool()
 async def convertId(
     ids: str,
     route: str,
@@ -36,7 +37,7 @@ async def convertId(
     return response.json() .get("results")
 
 
-@mcp.tool()
+@togoid_mcp.tool()
 async def countId(
     source: str,
     target: str,
@@ -59,7 +60,7 @@ async def countId(
     response.raise_for_status()
     return response.json()
 
-@mcp.tool()
+@togoid_mcp.tool()
 async def getAllDataset() -> dict:
     """Get configuration for all available datasets.
     
@@ -71,7 +72,7 @@ async def getAllDataset() -> dict:
     response.raise_for_status()
     return response.json()
 
-@mcp.tool()
+@togoid_mcp.tool()
 async def getDataset(dataset: str) -> dict:
     """Get configuration for a specific dataset.
     
@@ -90,7 +91,7 @@ async def getDataset(dataset: str) -> dict:
     response.raise_for_status()
     return response.json()
 
-@mcp.tool()
+@togoid_mcp.tool()
 async def getAllRelation() -> dict:
     """Get all possible conversion relationships between databases.
     
@@ -101,7 +102,7 @@ async def getAllRelation() -> dict:
     response.raise_for_status()
     return response.json()
 
-@mcp.tool()
+@togoid_mcp.tool()
 async def getRelation(source: str, target: str) -> list:
     """Get relationship details between two specific databases.
     
@@ -116,7 +117,7 @@ async def getRelation(source: str, target: str) -> list:
     response.raise_for_status()
     return response.json()
 
-@mcp.tool()
+@togoid_mcp.tool()
 async def getDescription() -> dict:
     """Get descriptions for all databases.
     

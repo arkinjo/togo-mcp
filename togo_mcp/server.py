@@ -4,6 +4,9 @@ from typing import Dict
 import os
 import httpx
 import logging
+from starlette.requests import Request
+from starlette.responses import PlainTextResponse
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -66,3 +69,7 @@ async def execute_sparql(sparql_query: str, dbname: str) -> str:
 
 # The Primary MCP server
 mcp = FastMCP("TogoMCP: RDF Portal MCP Server")
+
+@mcp.custom_route("/health", methods=["GET"])
+async def health_check(request: Request) -> PlainTextResponse:
+    return PlainTextResponse("OK")
