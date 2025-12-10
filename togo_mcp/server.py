@@ -5,7 +5,7 @@ import os
 import httpx
 import logging
 from starlette.requests import Request
-from starlette.responses import PlainTextResponse
+from starlette.responses import PlainTextResponse,HTMLResponse
 
 
 # Set up logging
@@ -73,3 +73,9 @@ mcp = FastMCP("TogoMCP: RDF Portal MCP Server")
 @mcp.custom_route("/health", methods=["GET"])
 async def health_check(request: Request) -> PlainTextResponse:
     return PlainTextResponse("OK")
+
+@mcp.custom_route("/", methods=["GET"])
+async def index(request: Request) -> HTMLResponse:
+    with open(CWD + '/resources/index.html', 'r') as f:
+        html_content = f.read()
+    return HTMLResponse(html_content)
