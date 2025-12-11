@@ -918,10 +918,13 @@
                 <div class="setup-box">
                     <h4>Claude Desktop</h4>
                     <p style="font-size: 14px; margin-bottom: 15px;">
-                        Connect TogoMCP to Claude Desktop for seamless access to life sciences databases. There are two methods depending on your subscription plan.
+                        Connect TogoMCP to Claude Desktop for seamless access to life sciences databases. There are two methods for connecting remote MCP servers.
                     </p>
                     
-                    <h5 style="margin: 15px 0 10px 0; font-size: 15px; color: #004098;">Method 1: Settings UI (Pro/Max/Team/Enterprise Plans)</h5>
+                    <h5 style="margin: 15px 0 10px 0; font-size: 15px; color: #004098;">Method 1: Settings UI (Recommended)</h5>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 10px;">
+                        <strong>Requirements:</strong> Claude Desktop with Pro, Max, Team, or Enterprise plan
+                    </p>
                     <ol>
                         <li>Open Claude Desktop</li>
                         <li>Navigate to <strong>Settings → Connectors</strong></li>
@@ -932,11 +935,14 @@
                         <li>Click <strong>"Add"</strong> to save</li>
                     </ol>
 
-                    <h5 style="margin: 20px 0 10px 0; font-size: 15px; color: #004098;">Method 2: JSON Configuration (All Users)</h5>
+                    <h5 style="margin: 20px 0 10px 0; font-size: 15px; color: #004098;">Method 2: JSON Configuration</h5>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 10px;">
+                        This method uses <code>npx mcp-remote</code> to connect to remote servers via JSON configuration.
+                    </p>
                     <ol>
                         <li>Open Claude Desktop and go to <strong>Settings → Developer → Edit Config</strong></li>
                         <li>This opens <code>claude_desktop_config.json</code></li>
-                        <li>Add the TogoMCP configuration using <code>npx mcp-remote</code>:
+                        <li>Add the TogoMCP configuration:
 <pre><code>{
   "mcpServers": {
     "togomcp": {
@@ -954,7 +960,7 @@
                     </ol>
                     
                     <p style="font-size: 13px; color: #666; margin-top: 15px;">
-                        <strong>Note:</strong> Method 1 (Settings UI) only works for paid plans and requires Claude Desktop to handle the connection internally. Method 2 uses the <code>npx mcp-remote</code> package to bridge remote MCP servers to Claude Desktop's stdio interface. For more details, see the <a href="https://modelcontextprotocol.io/docs/develop/connect-remote-servers" style="color: #004098;">MCP documentation</a>.
+                        <strong>Note:</strong> The <code>npx mcp-remote</code> package bridges remote MCP servers to Claude Desktop's stdio interface. For official documentation on remote MCP servers, see the <a href="https://modelcontextprotocol.io/docs/develop/connect-remote-servers" style="color: #004098;">MCP documentation</a> and <a href="https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp" style="color: #004098;">Claude custom connectors guide</a>.
                     </p>
                 </div>
 
@@ -962,26 +968,33 @@
                 <div class="setup-box">
                     <h4>ChatGPT</h4>
                     <p style="font-size: 14px; margin-bottom: 15px;">
-                        Enable TogoMCP in ChatGPT through Developer Mode to access life sciences databases in your conversations.
+                        Connect TogoMCP to ChatGPT to leverage life sciences databases in your conversations and deep research workflows. MCP connectors in ChatGPT require a paid subscription.
+                    </p>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">
+                        <strong>Requirements:</strong> ChatGPT Plus, Pro, Business, or Enterprise plan
                     </p>
                     <ol>
-                        <li>Open ChatGPT and ensure you have access to <strong>Developer Mode</strong></li>
-                        <li>Navigate to <strong>Settings → Beta Features</strong></li>
-                        <li>Enable <strong>MCP Connectors</strong></li>
-                        <li>Go to <strong>MCP Connectors</strong> settings</li>
-                        <li>Click <strong>Add Connector</strong></li>
-                        <li>Configure the TogoMCP connector:
+                        <li>Open ChatGPT and navigate to <strong>Settings</strong></li>
+                        <li>Go to <strong>Connectors</strong> in the settings menu</li>
+                        <li>Click <strong>Advanced Settings</strong></li>
+                        <li>Enable <strong>"Developer Mode (beta)"</strong></li>
+                        <li>Click <strong>Create</strong> next to "Browser connectors"</li>
+                        <li>In the "New Connector" modal, fill in:
                             <ul style="margin-top: 10px; margin-left: 20px;">
                                 <li><strong>Name:</strong> TogoMCP</li>
-                                <li><strong>Type:</strong> Remote MCP Server</li>
-                                <li><strong>URL:</strong> <code>https://togomcp.rdfportal.org/mcp</code></li>
+                                <li><strong>Description:</strong> Access to 20+ life sciences databases via SPARQL</li>
+                                <li><strong>MCP Server URL:</strong> <code>https://togomcp.rdfportal.org/mcp</code></li>
+                                <li><strong>Authentication:</strong> None (or select appropriate option if required)</li>
                             </ul>
                         </li>
-                        <li>Save the configuration</li>
-                        <li>TogoMCP tools will now be available in your ChatGPT conversations</li>
+                        <li>Check "I trust this application" and click <strong>Create</strong></li>
+                        <li>The TogoMCP tools will now be available in your conversations</li>
                     </ol>
                     <p style="font-size: 13px; color: #666; margin-top: 15px;">
-                        <strong>Note:</strong> For detailed instructions, visit the <a href="https://help.openai.com/ja-jp/articles/12584461-developer-mode-apps-and-full-mcp-connectors-in-chatgpt-beta" style="color: #004098;">ChatGPT MCP documentation</a>.
+                        <strong>Usage:</strong> To use TogoMCP in a conversation, click the "+" icon in the composer, select "More", then choose "Developer mode" and select TogoMCP as a source. For more details, visit the <a href="https://platform.openai.com/docs/guides/developer-mode" style="color: #004098;">ChatGPT Developer Mode documentation</a>.
+                    </p>
+                    <p style="font-size: 13px; color: #666; margin-top: 10px;">
+                        <strong>Security Note:</strong> Custom connectors are not verified by OpenAI. Only add connectors from trusted sources.
                     </p>
                 </div>
 
