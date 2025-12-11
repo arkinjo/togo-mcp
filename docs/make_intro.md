@@ -89,3 +89,9 @@ The footer should include the following
 - Add a menu tab near the top of the page.
 - The menu tab should be sticky so the user can always see it when scrolling.
 - In the menu tab, include [Contact](https://dbcls.rois.ac.jp/contact-en.html) as a link.
+
+## Back-to-top button
+🔵 Circular button in DBCLS blue (#004098)
+⬆️ Simple arrow symbol (↑)
+📍 Fixed position in bottom-right corner
+✨ Smooth shadow and hover effects
