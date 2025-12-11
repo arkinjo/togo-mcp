@@ -52,29 +52,42 @@
             .sticky-menu {
                 position: sticky;
                 top: 90px;
-                padding: 12px 0;
+                padding: 10px 5px;
                 margin-top: 90px;
                 background: #ffffff;
                 z-index: 11;
-                overflow-x: auto;
-                overflow-y: visible;
             }
 
             .sticky-menu nav {
-                padding: 0 10px;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(2, 1fr);
                 gap: 8px;
-                font-size: 11px;
-                justify-content: flex-start;
-                flex-wrap: nowrap;
-                width: max-content;
-                margin: 0 auto;
+                padding: 0 5px;
+                max-width: 100%;
             }
 
             .sticky-menu a {
-                padding: 8px 12px;
-                font-size: 11px;
-                flex-shrink: 0;
-                white-space: nowrap;
+                padding: 8px 4px;
+                font-size: 10px;
+                text-align: center;
+                display: block;
+            }
+            
+            .sticky-menu a:nth-child(n+5) {
+                grid-column: span 1;
+            }
+            
+            .sticky-menu a:nth-child(5) {
+                grid-column: 1 / 2;
+            }
+            
+            .sticky-menu a:nth-child(6) {
+                grid-column: 2 / 3;
+            }
+            
+            .sticky-menu a:nth-child(7) {
+                grid-column: 3 / 5;
             }
             
             .content__wrapper {
