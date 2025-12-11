@@ -44,6 +44,16 @@ Read the following webpages carefully and write a concise and accurate setup gui
 - [Claude Desktop](https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp#h_3d1a65aded)
 - [ChatGPT](https://help.openai.com/ja-jp/articles/12584461-developer-mode-apps-and-full-mcp-connectors-in-chatgpt-beta)
 - [Gemini CLI](https://geminicli.com/docs/tools/mcp-server/#how-to-set-up-your-mcp-server) Note that TogoMCP is provided via **Streamable-HTTP, not SSE**.
+For Gemini CLI, the settings.json should be 
+```
+{
+  "mcpServers": {
+    "togomcp": {
+      "httpUrl": "https://togomcp.rdfportal.org/mcp"
+    }
+  }
+}
+```
 
 ## List available databases
 Create a list of available databases with a brief summary of each.
@@ -58,6 +68,20 @@ List the following resources with brief summaries. Search the Web if necessary.
 - [TogoID](https://togoid.dbcls.jp)
 - [PubDictionary MCP server](https://pubdictionaries.org/mcp) TogoMCP works well with PubDictionaries MCP server.
 - [DBCLS](https://dbcls.rois.jp)
+
+## Footer
+Use DBCLS's default CSS at https://dbcls.rois.ac.jp/style/default.css.
+The footer should include the following
+```html
+    <img src="https://dbcls.rois.ac.jp/img/logo_dbcls.svg" alt="" class="footer__logo">
+    <div class='footer__organism-text'>
+        <p class="footer__organism-main">Database Center for Life Science</p>
+        <p class="footer__organism-sub">Joint Support-Center for Data Science Research</p>
+        <p class="footer__organism-sub">Research Organization of Information and Systems</p>
+    </div>
+```
+The footer should be center-aligned.
+
 
 ## Menu tab
 Put a menu tab near the page top.
