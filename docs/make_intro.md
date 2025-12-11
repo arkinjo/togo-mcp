@@ -14,6 +14,7 @@ Create an HTML page for researchers in biology and medicine who are not necessar
 
 ## Style
 - Follow the style of DBCLS's default CSS at https://dbcls.rois.ac.jp/style/default.css.
+- However, make it readable both on PC and smartphone.
 - Mind the contrast! 
 
 ## Study TogoMCP
@@ -87,3 +88,4 @@ The footer should include the following
 ## Menu tab
 - Add a menu tab near the top of the page.
 - The menu tab should be sticky so the user can always see it when scrolling.
+- In the menu tab, include [Contact](https://dbcls.rois.ac.jp/contact-en.html) as a link.
