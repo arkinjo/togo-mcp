@@ -918,27 +918,43 @@
                 <div class="setup-box">
                     <h4>Claude Desktop</h4>
                     <p style="font-size: 14px; margin-bottom: 15px;">
-                        Connect TogoMCP to Claude Desktop for seamless access to life sciences databases directly in your desktop conversations.
+                        Connect TogoMCP to Claude Desktop for seamless access to life sciences databases. There are two methods depending on your subscription plan.
                     </p>
+                    
+                    <h5 style="margin: 15px 0 10px 0; font-size: 15px; color: #004098;">Method 1: Settings UI (Pro/Max/Team/Enterprise Plans)</h5>
                     <ol>
-                        <li>Open Claude Desktop and navigate to <strong>Settings</strong></li>
-                        <li>Go to the <strong>Developer</strong> tab</li>
-                        <li>Click <strong>Edit Config</strong> to open your configuration file</li>
-                        <li>Add the TogoMCP server configuration:
+                        <li>Open Claude Desktop</li>
+                        <li>Navigate to <strong>Settings → Connectors</strong></li>
+                        <li>Click <strong>"Add custom connector"</strong> at the bottom</li>
+                        <li>Paste the TogoMCP server URL:
+<pre><code>https://togomcp.rdfportal.org/mcp</code></pre>
+                        </li>
+                        <li>Click <strong>"Add"</strong> to save</li>
+                    </ol>
+
+                    <h5 style="margin: 20px 0 10px 0; font-size: 15px; color: #004098;">Method 2: JSON Configuration (All Users)</h5>
+                    <ol>
+                        <li>Open Claude Desktop and go to <strong>Settings → Developer → Edit Config</strong></li>
+                        <li>This opens <code>claude_desktop_config.json</code></li>
+                        <li>Add the TogoMCP configuration using <code>npx mcp-remote</code>:
 <pre><code>{
   "mcpServers": {
     "togomcp": {
-      "url": "https://togomcp.rdfportal.org/mcp"
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://togomcp.rdfportal.org/mcp"
+      ]
     }
   }
 }</code></pre>
                         </li>
-                        <li>Save the configuration file</li>
-                        <li>Restart Claude Desktop</li>
-                        <li>The TogoMCP tools will now be available in your conversations</li>
+                        <li>Save the file and restart Claude Desktop</li>
+                        <li>The TogoMCP tools will appear in your conversations</li>
                     </ol>
+                    
                     <p style="font-size: 13px; color: #666; margin-top: 15px;">
-                        <strong>Note:</strong> For detailed instructions, visit the <a href="https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp" style="color: #004098;">Claude Desktop MCP documentation</a>.
+                        <strong>Note:</strong> Method 1 (Settings UI) only works for paid plans and requires Claude Desktop to handle the connection internally. Method 2 uses the <code>npx mcp-remote</code> package to bridge remote MCP servers to Claude Desktop's stdio interface. For more details, see the <a href="https://modelcontextprotocol.io/docs/develop/connect-remote-servers" style="color: #004098;">MCP documentation</a>.
                     </p>
                 </div>
 
