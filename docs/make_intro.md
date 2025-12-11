@@ -5,20 +5,23 @@ The TogoMCP endpoint is available at https://togomcp.rdfportal.org/mcp.
 It is developed by DBCLS.
 
 ## Goal
-Create an HTML page for the researchers in biology and medicine, not necessarily familiar with bioinformatics, to understand what TogoMCP is and how it can help them in their research. It should contain the following.
+Create an HTML page for researchers in biology and medicine who are not necessarily familiar with bioinformatics, explaining what TogoMCP is and how it can help their research. It should contain the following.
 - Summary of TogoMCP
 - Usage examples
 - Setup guide
 - List of available databases
 - List of available tools
 
+## Style
+- Follow the style of DBCLS's default CSS at https://dbcls.rois.ac.jp/style/default.css.
+- Mind the contrast! 
 
 ## Study TogoMCP
-Explore the TogoMCP tools to study how they work and available databases.
+Explore the TogoMCP tools to study how they work and the available databases.
 
 ## Usage examples
 Read the following files that contain example conversations. 
-Give the prompt of each session, followed by a brief summary of the response.
+Give the prompt of each session, followed by a summary of the response.
 Include the description of the TogoMCP tools used.
 
 - /Users/arkinjo/work/GitHub/togo-mcp/docs/example1.md
@@ -37,10 +40,8 @@ Key Results:
 (The summary of findings)
 ```
 
-
-
 ## Setup guide
-Read the following webpages carefully and write a concise and accurate setup guide for each.
+Read the following webpages carefully and write a concise, accurate setup guide for each.
 - [Claude Desktop](https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp#h_3d1a65aded)
 - [ChatGPT](https://help.openai.com/ja-jp/articles/12584461-developer-mode-apps-and-full-mcp-connectors-in-chatgpt-beta)
 - [Gemini CLI](https://geminicli.com/docs/tools/mcp-server/#how-to-set-up-your-mcp-server) Note that TogoMCP is provided via **Streamable-HTTP, not SSE**.
@@ -56,13 +57,13 @@ For Gemini CLI, the settings.json should be
 ```
 
 ## List available databases
-Create a list of available databases with a brief summary of each.
+Create a list of available databases with a summary of each.
 
 ## List available tools.
-Create a list of available tools with a brief description of their functionalities.
+Create a list of available tools, each with a brief description of its functionality.
 
 ## Related resources
-List the following resources with brief summaries. Search the Web if necessary.
+List the following resources with summaries. Search the Web if necessary.
 - [TogoMCP server](https://togomcp.rdfportal.org/mcp)
 - [RDF Portal](https://rdfportal.org)
 - [TogoID](https://togoid.dbcls.jp)
@@ -70,7 +71,6 @@ List the following resources with brief summaries. Search the Web if necessary.
 - [DBCLS](https://dbcls.rois.jp)
 
 ## Footer
-Use DBCLS's default CSS at https://dbcls.rois.ac.jp/style/default.css.
 The footer should include the following
 ```html
     <img src="https://dbcls.rois.ac.jp/img/logo_dbcls.svg" alt="" class="footer__logo">
@@ -80,8 +80,10 @@ The footer should include the following
         <p class="footer__organism-sub">Research Organization of Information and Systems</p>
     </div>
 ```
-The footer should be center-aligned.
-
+**IMPORTANT!**
+- Make sure to follow the style of DBCLS's default CSS at https://dbcls.rois.ac.jp/style/default.css in the footer.
+- The footer should be center-aligned.
 
 ## Menu tab
-Put a menu tab near the page top.
+- Add a menu tab near the top of the page.
+- The menu tab should be sticky so the user can always see it when scrolling.
