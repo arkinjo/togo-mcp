@@ -91,7 +91,7 @@ The footer should include the following
 - In the menu tab, include [Contact](https://dbcls.rois.ac.jp/contact-en.html) as a link.
 
 ## Back-to-top button
-🔵 Circular button in DBCLS blue (#004098)
-⬆️ Simple arrow symbol (↑)
-📍 Fixed position in bottom-right corner
-✨ Smooth shadow and hover effects
+- 🔵 Circular button in DBCLS blue (#004098)
+- ⬆️ Simple arrow symbol (↑)
+- 📍 Fixed position in bottom-right corner
+- ✨ Smooth shadow and hover effects
