@@ -31,24 +31,25 @@ SPARQL_EXAMPLES= CWD + "/sparql-examples"
 RDF_CONFIG_TEMPLATE= CWD + "/rdf-config/template.yaml"
 ENDPOINTS_CSV = CWD + "/resources/endpoints.csv"
 INDEX_HTML = CWD + "/docs/togomcp-intro.html"
+KW_SEARCH_INSTRUCTIONS = CWD + "/kw_search"
 
 
 
-def load_sparql_endpoints(path: str) -> Dict[str, str]:
+def load_sparql_endpoints(path: str) -> Dict[str, Dict[str, str]]:
     """Load SPARQL endpoints from a CSV file."""
     endpoints = {}
     with open(path, mode='r', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         next(reader)  # Skip header
         for row in reader:
-            db_name, endpoint_url = row
+            db_name, endpoint_url, keyword_search_api = row
             key = db_name.lower().replace(' ', '_').replace('-', '')
-            endpoints[key] = endpoint_url
+            endpoints[key] = {"url": endpoint_url, "keyword_search": keyword_search_api}
     return endpoints
 
 # The SPARQL endpoints for various RDF databases, loaded from a CSV file.
 SPARQL_ENDPOINT = load_sparql_endpoints(ENDPOINTS_CSV)
-DBNAME_DESCRIPTION = f"Database name: One of {", ".join(SPARQL_ENDPOINT.keys())}"
+DBNAME_DESCRIPTION = f"Database name: One of {','.join(SPARQL_ENDPOINT.keys())}"
 
 # Making this a @mcp.tool() becomes an error, so we keep it as a function.
 async def execute_sparql(sparql_query: str, dbname: str) -> str:
@@ -65,7 +66,7 @@ async def execute_sparql(sparql_query: str, dbname: str) -> str:
 
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            SPARQL_ENDPOINT[dbname], data={"query": sparql_query}, headers={"Accept": "text/csv"}
+            SPARQL_ENDPOINT[dbname]["url"], data={"query": sparql_query}, headers={"Accept": "text/csv"}
         )
     response.raise_for_status()
     return response.text

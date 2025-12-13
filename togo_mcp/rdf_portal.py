@@ -29,7 +29,7 @@ def rdf_portal_guide() -> str:
 # --- Tools for RDF Portal --- #
 
 @mcp.tool()
-async def get_sparql_endpoints() -> Dict[str,str]:
+async def get_sparql_endpoints() -> Dict[str,Dict[str,str]]:
     """ Get the available SPARQL endpoints for RDF Portal. 
     Returns:
         Dict[str,str]: Dictionary of dbname-URL pairs.
