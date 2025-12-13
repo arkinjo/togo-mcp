@@ -63,12 +63,17 @@ Create a list of available databases with a summary of each.
 ## List available tools.
 Create a list of available tools, each with a brief description of its functionality.
 
+## Other MCP servers
+These MCP servers are strongly recommended to be used with TogoMCP.
+- [PubDictionary MCP server](https://pubdictionaries.org/mcp) TogoMCP works well with PubDictionaries MCP server.
+- [PubMed MCP server](https://support.claude.com/en/articles/12614801-using-the-pubmed-connector-in-claude)
+- [OLS4 MCP server](https://www.ebi.ac.uk/ols4/mcp)
+
 ## Related resources
 List the following resources with summaries. Search the Web if necessary.
 - [TogoMCP server](https://togomcp.rdfportal.org/mcp)
 - [RDF Portal](https://rdfportal.org)
 - [TogoID](https://togoid.dbcls.jp)
-- [PubDictionary MCP server](https://pubdictionaries.org/mcp) TogoMCP works well with PubDictionaries MCP server.
 - [DBCLS](https://dbcls.rois.jp)
 
 ## Footer
