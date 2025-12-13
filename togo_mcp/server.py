@@ -26,7 +26,7 @@ def toolcall_log(funname: str) -> None:
 CWD = os.getenv("TOGOMCP_DIR", ".")
 MIE_DIR = CWD + "/mie"
 MIE_PROMPT= CWD + "/resources/MIE_prompt.md"
-RDF_PORTAL_GUIDE= CWD + "/resources/rdf_portal_guide.md"
+TOGOMCP_USAGE_GUIDE= CWD + "/resources/togomcp_usage_guide.md"
 SPARQL_EXAMPLES= CWD + "/sparql-examples"
 RDF_CONFIG_TEMPLATE= CWD + "/rdf-config/template.yaml"
 ENDPOINTS_CSV = CWD + "/resources/endpoints.csv"
