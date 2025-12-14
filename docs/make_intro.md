@@ -16,6 +16,7 @@ Create an HTML page for researchers in biology and medicine who are not necessar
 - Follow the style of DBCLS's default CSS at https://dbcls.rois.ac.jp/style/default.css.
 - However, make it readable both on PC and smartphone.
 - Mind the contrast! 
+- The hero section should show the MCP endpoint URL.
 
 ## Study TogoMCP
 Explore the TogoMCP tools to study how they work and the available databases.
