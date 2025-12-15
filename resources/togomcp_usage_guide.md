@@ -4,154 +4,136 @@ A step-by-step workflow for answering user questions using TogoMCP tools.
 
 ---
 
-## Workflow Steps
+## Quick Workflow
 
-### Step 1: Extract Keywords from User Question
-- Identify key scientific terms, entities, or concepts
-- Note specific IDs if mentioned (e.g., "P04637", "CID2244", "aspirin")
-- Determine the domain: proteins, chemicals, diseases, genes, pathways, etc.
+### Step 1: Extract Keywords
+Identify key terms, IDs, and domain (proteins, chemicals, diseases, genes, pathways, etc.)
 
-### Step 2: Select Appropriate Databases
-Run `list_databases()` and choose relevant databases based on the question domain:
+### Step 2: Select Databases
+Run `list_databases()` and choose by domain:
+- Proteins: `uniprot`, `pdb`, `ensembl`, `ncbigene`
+- Chemicals: `pubchem`, `chembl`, `chebi`, `rhea`
+- Diseases: `mondo`, `mesh`, `medgen`, `clinvar`
+- Pathways: `reactome`, `go`
 
-| Domain | Recommended Databases |
-|--------|----------------------|
-| Proteins | `uniprot`, `pdb`, `ensembl`, `ncbigene` |
-| Small molecules | `pubchem`, `chembl`, `chebi`, `rhea` |
-| Diseases | `mondo`, `nando`, `mesh`, `medgen`, `clinvar` |
-| Pathways | `reactome`, `rhea`, `go` |
-| Genes | `ncbigene`, `ensembl`, `uniprot` |
-| Microorganisms | `bacdive`, `mediadive`, `taxonomy` |
-| Literature | `pubmed`, `pubtator` |
-| Glycobiology | `glycosmos` |
+### Step 3: Search - ALWAYS Try Tools First
 
-### Step 3: Perform Keyword Search
-Use specialized search tools when available:
+**Available Search Tools:**
+- `search_uniprot_entity(query, limit)` - proteins (searches names, descriptions, AND disease associations)
+- `search_chembl_molecule/target(query, limit)` - drugs/targets
+- `search_pdb_entity(db, query, limit)` - structures
+- `search_reactome_entity(query, rows)` - pathways
+- `search_rhea_entity(query, limit)` - reactions
+- `search_mesh_entity(query, limit)` - medical concepts
 
-#### Available Search Tools:
-- `search_uniprot_entity(query, limit=20)` - for proteins
-- `search_chembl_molecule(query, limit=20)` - for small molecules
-- `search_chembl_target(query, limit=20)` - for drug targets
-- `search_pdb_entity(db, query, limit=20)` - for structures (db: "pdb", "cc", "prd")
-- `search_reactome_entity(query, rows=30)` - for pathways
-- `search_rhea_entity(query, limit=100)` - for biochemical reactions
-- `search_mesh_entity(query, limit=10)` - for medical concepts
-
-#### Getting Search Instructions:
-If unsure how to search a database, run:
+**Decision Tree:**
 ```
-keyword_search_instructions(dbname)
+Try search tool → Got results? → Use them
+                → Insufficient? → Try different keywords
+                → Still no? → Use SPARQL (Step 4)
 ```
 
-### Step 4: Study the Database Schema
-**CRITICAL:** Before writing SPARQL queries, always run:
-```
-get_MIE_file(dbname)
-```
+**Don't assume limitations - search tools are more powerful than their names suggest.**
 
-The MIE file contains:
-- **Shape expressions**: Data structure and relationships
-- **Sample RDF entries**: Real data examples
-- **SPARQL query examples**: Working queries for reference
-- **Cross-references**: How to link to other databases
-- **Anti-patterns**: Common mistakes to avoid
-- **Performance tips**: Database-specific optimizations
+### Step 4: SPARQL (When Needed)
 
-### Step 5: Retrieve Detailed Information
-Using the IDs from Step 3 and knowledge from Step 4:
+**Before SPARQL, ALWAYS run:** `get_MIE_file(dbname)`
 
-#### Option A: Use SPARQL Queries
-Run `run_sparql(dbname, sparql_query)` following the MIE file examples:
+**Use SPARQL when you need:**
+- Specific annotation types (Disease_Annotation vs Function_Annotation)
+- Complex boolean logic (X AND Y AND NOT Z)
+- Precise field targeting (search only within specific predicates)
+- Aggregations (COUNT, GROUP BY)
 
 **Critical Rules:**
-- **UniProt**: Always filter `up:reviewed 1` for quality data
-- **PubChem**: Use explicit `FROM <graph>` clauses for bioassays/proteins
-- **ChEMBL**: Filter by specific entity types early
-- Always use `LIMIT` (typically 20-100)
+- UniProt: Always filter `up:reviewed 1`
+- ChEMBL: Use `FROM <http://rdf.ebi.ac.uk/dataset/chembl>`
 - Split property paths when using `bif:contains`
+- Always use `LIMIT` (20-100)
 
-#### Option B: Use Helper Functions
-For specific databases:
-- `get_pubchem_compound_id(compound_name)` - get PubChem CID
-- `get_compound_attributes_from_pubchem(pubchem_compound_id)` - get attributes
-
-### Step 6: Connect Database IDs
-Use TogoID tools to find relationships between different database IDs:
-
-#### Core TogoID Tools:
+### Step 5: Connect IDs
+Use TogoID to convert between databases:
 ```python
-# Convert IDs between databases
-togoid_convertId(ids="P04637,P17612", route="uniprot,pdb")
-
-# Count convertible IDs
-togoid_countId(source="uniprot", target="pdb", ids="P04637,P17612")
-
-# Get available conversion routes
-togoid_getAllRelation()
-
-# Get dataset configurations
-togoid_getDataset(dataset="uniprot")
+togoid_convertId(ids="P04637,P17612", route="uniprot,chembl_target")
 ```
 
-**Common ID Conversions:**
-- UniProt ↔ PDB, NCBI Gene, ChEMBL, Reactome
-- PubChem ↔ ChEBI, ChEMBL
-- NCBI Gene ↔ Ensembl, UniProt
-- MeSH ↔ MONDO, ChEBI
-
-### Step 7: Synthesize and Present Results
-- Combine information from multiple databases
-- Highlight key findings and relationships
-- Cite data sources appropriately
-- Note any limitations or gaps in the data
-
----
-
-## Quick Reference
-
-### Database Selection by Question Type
-
-**"What is the structure of [protein]?"**
-→ `uniprot` + `pdb`
-
-**"What drugs target [protein]?"**
-→ `chembl` + `uniprot` + `pubchem`
-
-**"What pathways involve [gene/protein]?"**
-→ `reactome` + `go` + `uniprot`
-
-**"What are the properties of [chemical compound]?"**
-→ `pubchem` + `chebi` + `chembl`
-
-**"What diseases are associated with [gene]?"**
-→ `ncbigene` + `clinvar` + `mondo` + `medgen`
-
-**"What reactions involve [compound]?"**
-→ `rhea` + `reactome` + `pubchem`
+### Step 6: Synthesize Results
+Combine information, cite sources, note limitations.
 
 ---
 
 ## Best Practices
 
-1. **Always read MIE files before SPARQL** - Prevents common errors and timeouts
-2. **Use specialized search tools first** - Faster and more reliable than raw SPARQL
-3. **Start with small limits** - Use LIMIT 20-50 for initial exploration
-4. **Check anti-patterns** - Every MIE file lists common mistakes to avoid
-5. **Combine databases** - Use TogoID to link complementary data sources
-6. **Filter early** - Apply type and reviewed status filters at the start of queries
+✅ **Test, don't assume** - Try search tools before SPARQL
+✅ **Read MIE files** - Before writing any SPARQL
+✅ **Combine approaches** - Search for breadth, SPARQL for depth
+✅ **Start simple** - Escalate complexity only when needed
+
+❌ Don't skip search tools based on assumptions
+❌ Don't write SPARQL without reading MIE file
+❌ Don't forget `up:reviewed 1` in UniProt
+❌ Don't use `bif:contains` with property paths
 
 ---
 
-## Common Pitfalls
+## Complementary Approach: Search + SPARQL
 
-❌ Writing SPARQL without reading MIE file
-❌ Forgetting `up:reviewed 1` in UniProt queries
-❌ Omitting `FROM <graph>` in PubChem bioassay/protein queries
-❌ Using `bif:contains` with property paths (split them first)
-❌ Running aggregations without LIMIT
-❌ Assuming all databases use the same schema patterns
+**For comprehensive results, use both:**
 
-✅ Read MIE → Use examples → Adapt to your needs
-✅ Use specialized search functions when available
-✅ Apply database-specific optimizations
-✅ Connect related data with TogoID tools
+```
+1. search_uniprot_entity("cardiovascular disease") → Quick overview
+2. SPARQL on Disease_Annotation → Targeted precision
+3. Merge results, remove duplicates → Comprehensive coverage
+```
+
+**When to use both:**
+- Initial exploration (search) + comprehensive analysis (SPARQL)
+- Quality check (compare both methods)
+- Different aspects (search names, SPARQL annotations)
+
+---
+
+## Quick Examples
+
+**Disease-protein associations:**
+```python
+# Start with search
+search_uniprot_entity("hypertension", limit=20)
+# If incomplete, add SPARQL targeting Disease_Annotation
+```
+
+**Finding drug targets:**
+```python
+# Search protein
+search_uniprot_entity("angiotensin converting enzyme")
+# Convert to ChEMBL
+togoid_convertId(ids="P12821", route="uniprot,chembl_target")
+# Find inhibitors in ChEMBL
+```
+
+**Pathway analysis:**
+```python
+search_reactome_entity("apoptosis", rows=30)
+```
+
+---
+
+## Common Query Patterns
+
+| Question Type | Start With | Then |
+|--------------|------------|------|
+| "Proteins with disease X" | `search_uniprot_entity("disease")` | SPARQL if needed |
+| "Drugs targeting protein Y" | `search_uniprot_entity("protein")` | Convert to ChEMBL |
+| "Structure of protein Z" | `search_uniprot_entity("protein")` | Convert to PDB |
+| "Pathways involving gene A" | `search_reactome_entity("gene")` | Cross-reference |
+
+---
+
+## Remember
+
+**The goal is to find the best answer efficiently, not to use the most sophisticated tool.**
+
+1. Try search tools first (they're more capable than you think)
+2. Use SPARQL for precision when needed
+3. Combine both for comprehensive results
+4. Always read MIE files before SPARQL

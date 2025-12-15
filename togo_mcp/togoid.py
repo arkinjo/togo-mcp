@@ -22,6 +22,7 @@ async def convertId(
     Returns:
         Dictionary with ids, route, and result arrays
     """
+    toolcall_log("convertId")
     params = {
         "ids": ids,
         "route": route,
@@ -53,6 +54,7 @@ async def countId(
     Returns:
         Dictionary with source and target counts
     """
+    toolcall_log("countId")
     response = await _client.get(
         f"/count/{source}-{target}",
         params={"ids": ids}
@@ -68,6 +70,7 @@ async def getAllDataset() -> dict:
         Dictionary mapping dataset names to their configurations
         including labels, regex patterns, prefixes, examples, etc.
     """
+    toolcall_log("getAllDataset")
     response = await _client.get("/config/dataset")
     response.raise_for_status()
     return response.json()
@@ -87,6 +90,7 @@ async def getDataset(dataset: str) -> dict:
         - examples: Sample IDs
         - annotations: Available annotation types
     """
+    toolcall_log("getDataset")
     response = await _client.get(f"/config/dataset/{dataset}")
     response.raise_for_status()
     return response.json()
@@ -98,6 +102,7 @@ async def getAllRelation() -> dict:
     Returns:
         Dictionary mapping database pairs to their relationships
     """
+    toolcall_log("getAllRelation")
     response = await _client.get("/config/relation")
     response.raise_for_status()
     return response.json()
@@ -113,6 +118,7 @@ async def getRelation(source: str, target: str) -> list:
     Returns:
         List of relationship objects with forward, reverse, and description
     """
+    toolcall_log("getRelation")
     response = await _client.get(f"/config/relation/{source}-{target}")
     response.raise_for_status()
     return response.json()
@@ -125,6 +131,7 @@ async def getDescription() -> dict:
         Dictionary with English and Japanese descriptions,
         names, and organization info for each database
     """
+    toolcall_log("getDescription")
     response = await _client.get("/config/descriptions")
     response.raise_for_status()
     return response.json()

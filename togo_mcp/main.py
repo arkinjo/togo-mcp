@@ -2,10 +2,12 @@ from .server import *
 from .rdf_portal import *
 from .api_tools import *
 from .togoid import togoid_mcp
+from .ncbi_tools import ncbi_mcp
 import asyncio
 
 async def setup():
     await mcp.import_server(togoid_mcp, prefix="togoid")
+    await mcp.import_server(ncbi_mcp, prefix="ncbi")
 
 def run():
     asyncio.run(setup())
