@@ -1,73 +1,262 @@
-# TogoMCP Automated Test Runner
+# TogoMCP Automated Evaluation - Agent SDK Version
 
-This directory contains scripts for automated evaluation of TogoMCP capabilities.
+This directory contains the **corrected** automated test runner that uses the **Claude Agent SDK** with full MCP support.
+
+## Important Note
+
+This is the **correct** version that actually works with MCP servers. The previous version in `/evaluation/scripts/` used the wrong SDK and **cannot** use MCP servers.
+
+## What's Different?
+
+| Feature | Old Version (`/scripts`) | New Version (here) |
+|---------|-------------------------|-------------------|
+| SDK Used | `anthropic` | `claude-agent-sdk` |
+| MCP Support | ❌ No | ✅ Yes |
+| Status | Broken for MCP | Works correctly |
 
 ## Quick Start
 
 ### 1. Installation
 
 ```bash
-# Install required Python package
+cd /Users/arkinjo/work/GitHub/togo-mcp/evaluation/agent_scripts
+
+# Install dependencies
 pip install -r requirements.txt
 
-# Or install with the project dependencies
-cd ../..  # Navigate to project root
-pip install -e .
+# Or install manually
+pip install claude-agent-sdk anthropic
 ```
 
-### 2. Set Up API Key
+### 2. Set API Key
 
 ```bash
-# Export your Anthropic API key
 export ANTHROPIC_API_KEY="your-api-key-here"
-
-# Or add to your shell profile (~/.bashrc, ~/.zshrc, etc.)
-echo 'export ANTHROPIC_API_KEY="your-api-key-here"' >> ~/.bashrc
 ```
 
-### 3. Run Example Evaluation
+### 3. Run Example
 
 ```bash
-# Run the example questions
+# Run with example questions
 python automated_test_runner.py example_questions.json
 
-# Results will be saved to evaluation_results.csv
+# With custom config
+python automated_test_runner.py example_questions.json -c config.json
+
+# Custom output path
+python automated_test_runner.py example_questions.json -o my_results.csv
 ```
 
-## Usage
+## Files in This Directory
 
-### Basic Usage
+### Core Files
+
+1. **`automated_test_runner.py`** - Main evaluation script (using Agent SDK)
+2. **`config.json`** - Configuration with MCP server settings
+3. **`requirements.txt`** - Python dependencies
+4. **`example_questions.json`** - 10 sample questions
+
+### Documentation
+
+5. **`README.md`** - This file
+6. **`MCP_CONFIGURATION.md`** - How to configure MCP servers
+7. **`USAGE_GUIDE.md`** - Detailed usage instructions
+
+## How It Works
+
+### Two-Phase Testing
+
+The script runs each question twice:
+
+#### Phase 1: Baseline (No Tools)
+- Uses regular `anthropic` SDK
+- System prompt: "Answer using only your training knowledge..."
+- **No MCP servers, no tools**
+- Captures: answer text, timing, token usage
+
+#### Phase 2: TogoMCP (With MCP)
+- Uses `claude-agent-sdk`
+- System prompt: "You have access to biological databases..."
+- **MCP servers enabled** (TogoMCP by default)
+- Captures: answer text, timing, tools used, tool details
+
+### Results
+
+Output CSV contains:
+- Both baseline and TogoMCP answers
+- Tool usage details
+- Response times
+- Token usage
+- Success/failure status
+
+## Configuration
+
+### Basic Configuration
+
+Edit `config.json`:
+
+```json
+{
+  "model": "claude-sonnet-4-20250514",
+  "mcp_servers": {
+    "togomcp": {
+      "type": "http",
+      "url": "https://togomcp.rdfportal.org/mcp"
+    }
+  }
+}
+```
+
+### MCP Server Types
+
+#### 1. Remote HTTP
+```json
+{
+  "togomcp": {
+    "type": "http",
+    "url": "https://togomcp.rdfportal.org/mcp",
+    "headers": {
+      "Authorization": "Bearer ${API_TOKEN}"
+    }
+  }
+}
+```
+
+#### 2. stdio - Local Process
+```json
+{
+  "local-mcp": {
+    "command": "npx",
+    "args": ["@modelcontextprotocol/server-filesystem"],
+    "env": {
+      "ALLOWED_PATHS": "/path/to/data"
+    }
+  }
+}
+```
+
+#### 3. Multiple Servers
+```json
+{
+  "mcp_servers": {
+    "togomcp": {
+      "type": "http",
+      "url": "https://togomcp.rdfportal.org/mcp"
+    },
+    "pubmed": {
+      "type": "http",
+      "url": "https://pubmed.mcp.claude.com/mcp"
+    }
+  }
+}
+```
+
+### Per-Question MCP Configuration
+
+You can override MCP servers for specific questions in `questions.json`:
+
+```json
+[
+  {
+    "id": 1,
+    "question": "What is the UniProt ID for human BRCA1?",
+    "mcp_servers": {
+      "togomcp": {
+        "type": "http",
+        "url": "https://togomcp.rdfportal.org/mcp"
+      }
+    }
+  },
+  {
+    "id": 2,
+    "question": "Find papers about BRCA1",
+    "mcp_servers": {
+      "pubmed": {
+        "type": "http",
+        "url": "https://pubmed.mcp.claude.com/mcp"
+      }
+    }
+  }
+]
+```
+
+## Usage Examples
+
+### Basic Evaluation
 
 ```bash
-python automated_test_runner.py <questions_file.json>
+# Run all questions
+python automated_test_runner.py example_questions.json
+
+# Results saved to: evaluation_results.csv
 ```
 
-### Advanced Options
+### Custom Configuration
 
 ```bash
-# Use custom configuration
-python automated_test_runner.py questions.json -c custom_config.json
-
-# Specify output path
-python automated_test_runner.py questions.json -o my_results.csv
-
-# Export as JSON instead of CSV
-python automated_test_runner.py questions.json -o results.json --format json
-
-# Combine options
-python automated_test_runner.py questions.json -c config.json -o results.csv
+# Use different MCP server
+python automated_test_runner.py questions.json -c my_config.json
 ```
 
-### Command-Line Arguments
+### Custom Output
 
-- `questions_file` (required): Path to JSON file containing questions
-- `-c, --config`: Path to configuration JSON file (optional)
-- `-o, --output`: Output path for results (default: `evaluation_results.csv`)
-- `--format`: Output format, either `csv` or `json` (default: `csv`)
+```bash
+# JSON output instead of CSV
+python automated_test_runner.py questions.json --format json -o results.json
+```
+
+### Full Example
+
+```bash
+# Complete evaluation with all options
+python automated_test_runner.py \
+  my_questions.json \
+  -c my_config.json \
+  -o detailed_results.csv \
+  --format csv
+```
+
+## Output Format
+
+The CSV output includes these columns:
+
+| Column | Description |
+|--------|-------------|
+| `question_id` | Question identifier |
+| `date` | Evaluation date |
+| `category` | Question category |
+| `question_text` | The question asked |
+| `baseline_success` | Whether baseline succeeded |
+| `baseline_text` | Baseline answer |
+| `baseline_time` | Baseline response time (seconds) |
+| `baseline_input_tokens` | Tokens used (input) |
+| `baseline_output_tokens` | Tokens used (output) |
+| `togomcp_success` | Whether TogoMCP succeeded |
+| `togomcp_text` | TogoMCP answer |
+| `togomcp_time` | TogoMCP response time (seconds) |
+| `tools_used` | Comma-separated tool names |
+| `tool_details` | JSON with full tool details |
+| `expected_answer` | Expected answer (from questions file) |
+| `notes` | Additional notes |
+
+## Analysis
+
+After running evaluation, you can analyze results using the analyzer from the scripts directory:
+
+```bash
+# Copy results analyzer
+cp ../scripts/results_analyzer.py .
+
+# Analyze results
+python results_analyzer.py evaluation_results.csv
+
+# Verbose mode
+python results_analyzer.py evaluation_results.csv -v
+```
 
 ## Question File Format
 
-Questions should be in JSON format with the following structure:
+Create questions in JSON format:
 
 ```json
 [
@@ -76,326 +265,124 @@ Questions should be in JSON format with the following structure:
     "category": "Precision",
     "question": "What is the UniProt ID for human BRCA1?",
     "expected_answer": "P38398",
-    "notes": "Optional notes about this question"
-  },
-  {
-    "id": 2,
-    "category": "Completeness",
-    "question": "How many genes are in GO term DNA repair?",
-    "expected_answer": "Variable, check current database",
-    "notes": "Tests comprehensive querying"
+    "notes": "Test basic UniProt ID lookup"
   }
 ]
 ```
 
 ### Required Fields
-
-- `question`: The question text to evaluate
+- `question`: The question text
 
 ### Optional Fields
-
 - `id`: Question identifier (defaults to index)
-- `category`: One of: Precision, Completeness, Integration, Currency, Specificity, Structured Query
-- `expected_answer`: The expected correct answer (for reference)
-- `notes`: Additional notes about the question
-- `mcp_servers`: Custom MCP server configurations (advanced)
+- `category`: Precision|Completeness|Integration|Currency|Specificity|Structured Query
+- `expected_answer`: What you expect the answer to be
+- `notes`: Additional context
+- `mcp_servers`: Override default MCP configuration
 
-### Question Categories
+## Common Issues
 
-1. **Precision**: Require exact, verifiable data (IDs, sequences, properties)
-2. **Completeness**: Require exhaustive data ("List all...", "How many...")
-3. **Integration**: Require cross-database linking (ID conversions, mappings)
-4. **Currency**: Benefit from up-to-date information
-5. **Specificity**: Niche/specialized information (rare diseases, unusual compounds)
-6. **Structured Query**: Complex database queries with filters
+### Error: "claude-agent-sdk not found"
 
-## Configuration File
-
-You can customize the test runner behavior with a JSON config file:
-
-```json
-{
-  "model": "claude-sonnet-4-20250514",
-  "max_tokens": 4000,
-  "temperature": 1.0,
-  "baseline_system_prompt": "Your custom baseline prompt...",
-  "togomcp_system_prompt": "Your custom TogoMCP prompt...",
-  "timeout": 60,
-  "retry_attempts": 3,
-  "retry_delay": 2
-}
+**Solution:**
+```bash
+pip install claude-agent-sdk
 ```
 
-### Configuration Options
+### Error: "ANTHROPIC_API_KEY not set"
 
-- `model`: Claude model to use (default: `claude-sonnet-4-20250514`)
-- `max_tokens`: Maximum tokens in response (default: 4000)
-- `temperature`: Sampling temperature (default: 1.0)
-- `baseline_system_prompt`: System prompt for baseline tests
-- `togomcp_system_prompt`: System prompt for TogoMCP tests
-- `timeout`: Request timeout in seconds (default: 60)
-- `retry_attempts`: Number of retry attempts on failure (default: 3)
-- `retry_delay`: Delay between retries in seconds (default: 2)
-
-## Output Format
-
-### CSV Output (default)
-
-The script generates a CSV file with the following columns:
-
-| Column | Description |
-|--------|-------------|
-| `question_id` | Question identifier |
-| `date` | Evaluation date (YYYY-MM-DD) |
-| `category` | Question category |
-| `question_text` | The question asked |
-| `baseline_success` | Whether baseline test succeeded (True/False) |
-| `baseline_text` | Baseline answer text |
-| `baseline_error` | Error message if baseline failed |
-| `baseline_time` | Time taken for baseline test (seconds) |
-| `baseline_input_tokens` | Input tokens used (baseline) |
-| `baseline_output_tokens` | Output tokens used (baseline) |
-| `togomcp_success` | Whether TogoMCP test succeeded (True/False) |
-| `togomcp_text` | TogoMCP answer text |
-| `togomcp_error` | Error message if TogoMCP failed |
-| `togomcp_time` | Time taken for TogoMCP test (seconds) |
-| `togomcp_input_tokens` | Input tokens used (TogoMCP) |
-| `togomcp_output_tokens` | Output tokens used (TogoMCP) |
-| `tools_used` | Comma-separated list of tools used |
-| `tool_details` | JSON array of tool use details |
-| `expected_answer` | Expected answer (from question file) |
-| `notes` | Notes (from question file) |
-
-### JSON Output
-
-If you use `--format json`, the output will be a JSON array with the same fields as above.
-
-## Features
-
-### Automatic Retry
-
-The test runner automatically retries failed API calls up to 3 times (configurable) with delays between attempts.
-
-### Progress Tracking
-
-During evaluation, you'll see real-time progress:
-
-```
-[1/10] Testing Q1: Precision
-  Question: What is the UniProt ID for human BRCA1?
-  ⏳ Running baseline test (no tools)...
-  ✓ Baseline completed in 2.34s
-  ⏳ Running TogoMCP test (with tools)...
-  ✓ TogoMCP completed in 3.67s
-    Tools used: search_uniprot_entity
+**Solution:**
+```bash
+export ANTHROPIC_API_KEY="your-key-here"
 ```
 
-### Intermediate Saves
+### Error: "MCP server connection failed"
 
-Results are automatically saved every 5 questions to `evaluation_results_intermediate.csv` to prevent data loss during long runs.
+**Check:**
+1. Server URL is correct
+2. Server is online: `curl https://togomcp.rdfportal.org/mcp`
+3. Network allows HTTP connections
+4. API tokens are set (if required)
 
-### Interrupt Handling
+### Error: "This event loop is already running"
 
-You can safely interrupt the evaluation with Ctrl+C. Results collected so far will be preserved.
-
-### Summary Statistics
-
-After completion, you'll see a summary:
-
-```
-==============================================================
-EVALUATION SUMMARY
-==============================================================
-Total questions:        10
-Baseline success rate:  10/10 (100.0%)
-TogoMCP success rate:   10/10 (100.0%)
-Questions using tools:  8/10 (80.0%)
-Avg baseline time:      2.15s
-Avg TogoMCP time:       3.42s
-
-Questions by category:
-  Completeness: 2
-  Integration: 3
-  Precision: 5
-==============================================================
-```
-
-## Example Workflow
-
-### 1. Create Your Questions
+This shouldn't happen with the current implementation, but if it does, make sure you're running the script directly:
 
 ```bash
-# Copy the example and customize
-cp example_questions.json my_questions.json
-nano my_questions.json
+python automated_test_runner.py questions.json
 ```
 
-### 2. Test with a Small Set First
+Not importing and calling from another async context.
 
-```json
-[
-  {
-    "id": 1,
-    "category": "Precision",
-    "question": "What is the UniProt ID for human TP53?",
-    "expected_answer": "P04637"
-  }
-]
-```
+## Comparison with Original Scripts
 
-### 3. Run the Test
+If you have results from both versions:
 
 ```bash
-python automated_test_runner.py my_questions.json -o test_results.csv
+# Old version (no MCP, baseline only)
+../scripts/automated_test_runner.py questions.json -o old_results.csv
+
+# New version (with MCP)
+./automated_test_runner.py questions.json -o new_results.csv
+
+# Compare
+diff old_results.csv new_results.csv
 ```
 
-### 4. Review Results
-
-```bash
-# View in a spreadsheet
-open test_results.csv
-
-# Or view in terminal
-column -s, -t < test_results.csv | less -S
-```
-
-### 5. Analyze and Iterate
-
-- Compare baseline vs TogoMCP answers
-- Check which tools were used
-- Verify expected answers
-- Refine questions that didn't work well
-- Add more questions to fill gaps
+You should see:
+- Old version: `tools_used` column is always empty
+- New version: `tools_used` column shows MCP tool names
 
 ## Integration with Evaluation Framework
 
-The CSV output is designed to be compatible with the evaluation tracker:
+The output CSV is compatible with the existing evaluation tracker:
 
-```bash
-# You can import automated results into your evaluation tracker
-# Then add manual scoring columns for the rubric dimensions
-```
+1. Run automated evaluation
+2. Open `evaluation_results.csv` in spreadsheet
+3. Add manual scoring columns from rubric:
+   - Accuracy (0-3)
+   - Precision (0-3)
+   - Completeness (0-3)
+   - Verifiability (0-3)
+   - Currency (0-3)
+   - Impossibility (0-3)
+4. Calculate total score and assessment
+5. Import into master evaluation tracker
 
-To add manual scoring to the automated results:
+## Best Practices
 
-1. Open the CSV in a spreadsheet application
-2. Add columns: `Accuracy`, `Precision`, `Completeness`, `Verifiability`, `Currency`, `Impossibility`
-3. Score each dimension 0-3 based on the rubric
-4. Add `Total_Score` and `Assessment` columns
-5. Use the existing evaluation rubric for consistent scoring
+1. **Start small**: Test with 3-5 questions first
+2. **Verify MCP**: Check that tools are actually being used
+3. **Compare carefully**: Look at both baseline and TogoMCP answers
+4. **Document findings**: Use the `notes` field liberally
+5. **Save configs**: Keep track of which MCP configuration was used
+6. **Version control**: Track question files and configs in git
 
-## Troubleshooting
+## Next Steps
 
-### API Key Not Set
+After running your first evaluation:
 
-```
-Error: ANTHROPIC_API_KEY environment variable not set.
-```
+1. Review results CSV
+2. Check which tools were used
+3. Compare baseline vs TogoMCP answers
+4. Add manual scoring using rubric
+5. Analyze patterns in tool usage
+6. Refine questions based on results
 
-**Solution**: Export your API key:
-```bash
-export ANTHROPIC_API_KEY="your-api-key-here"
-```
+## Support
 
-### Questions File Not Found
-
-```
-✗ Error: Questions file not found: questions.json
-```
-
-**Solution**: Check the file path and ensure the file exists.
-
-### API Rate Limits
-
-If you hit rate limits, you can:
-- Reduce the number of questions
-- Add delays between questions in the config
-- Use a smaller model if appropriate
-
-### Timeouts
-
-If tests are timing out:
-- Increase `timeout` in config.json
-- Simplify complex questions
-- Check your internet connection
-
-## Advanced Usage
-
-### Custom MCP Servers
-
-You can specify custom MCP server configurations per question:
-
-```json
-{
-  "id": 1,
-  "question": "Your question here",
-  "mcp_servers": [
-    {
-      "type": "url",
-      "url": "https://custom-mcp-server.example.com/mcp",
-      "name": "CustomMCP"
-    }
-  ]
-}
-```
-
-### Batch Processing
-
-For large evaluations, consider splitting into batches:
-
-```bash
-# Process 10 questions at a time
-python automated_test_runner.py batch1.json -o results_batch1.csv
-python automated_test_runner.py batch2.json -o results_batch2.csv
-python automated_test_runner.py batch3.json -o results_batch3.csv
-
-# Combine results
-cat results_batch*.csv > combined_results.csv
-```
-
-### Programmatic Usage
-
-You can also use the TestRunner class in your own Python scripts:
-
-```python
-from automated_test_runner import TestRunner
-
-# Initialize
-runner = TestRunner(config_path="config.json")
-
-# Load questions
-questions = runner.load_questions("questions.json")
-
-# Run evaluations
-results = runner.run_all_evaluations(questions)
-
-# Export
-runner.export_results("results.csv", format="csv")
-
-# Access results programmatically
-for result in results:
-    print(f"Q{result['question_id']}: {result['tools_used']}")
-```
-
-## Tips for Success
-
-1. **Start Small**: Test with 3-5 questions first
-2. **Verify Answers**: Check expected answers against actual databases
-3. **Document Everything**: Use the `notes` field liberally
-4. **Monitor Costs**: Each question makes 2 API calls (baseline + TogoMCP)
-5. **Save Frequently**: The script auto-saves, but you can manually save intermediate results
-6. **Review Failures**: Check `*_error` columns for any failures
-7. **Compare Times**: Look at `*_time` columns to understand performance
-
-## Contributing
-
-If you develop improvements to the test runner:
-
-1. Test thoroughly with various question types
-2. Update this README with new features
-3. Add example configurations if introducing new options
-4. Consider backward compatibility
+For issues specific to:
+- **MCP servers**: Check TogoMCP documentation
+- **Agent SDK**: See https://docs.anthropic.com/en/docs/agent-sdk
+- **This script**: Review the code and comments
+- **Evaluation methodology**: See `../togomcp_evaluation_rubric.md`
 
 ## License
 
 This evaluation tooling follows the same license as the main TogoMCP project.
+
+---
+
+**Created**: 2025-12-15  
+**Version**: 1.0 (Agent SDK)  
+**Status**: Production-ready with MCP support
