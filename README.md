@@ -1,3 +1,7 @@
+# IMPORTANT NOTE!!
+TogoMCP is now maintained at [DBCLS](https://github.com/dbcls/togo-mcp).
+This repository will no longer be updated.
+
 # TogoMCP: MCP server for the RDF Portal databases
 This MCP server executes SPARQL queries against various biological/biomedical RDF databases provided at the [RDF Portal](https://rdfportal.org/). 
 
